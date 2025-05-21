@@ -1,22 +1,28 @@
 import { useState } from 'react'
 import Navbar from './components/Navbar'
-import { Route,Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
+import Footer from './components/Footer';
+import AllRoom from './pages/AllRoom';
 
 
 function App() {
 
   const isOwner = useLocation().pathname.includes('owner');
   return (
-   <>
-   {!isOwner && <Navbar/>}
-   
-   <Routes>
-        <Route path='/' element={<Home />} />
-       
-      </Routes>
-   
-   </>
+    <>
+      {!isOwner && <Navbar />}
+      <div className='min-h-[70vh]'>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/rooms' element={<AllRoom />} />
+
+        </Routes>
+      </div>
+      <Footer />
+    </>
+
+
   )
 }
 

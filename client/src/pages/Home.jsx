@@ -2,6 +2,8 @@ import React from 'react'
 import Hero from '../components/Hero'
 import FearturedDestination from '../components/FearturedDestination'
 import Exclusiveoffer from '../components/Exclusiveoffer'
+import Testimonail from '../components/Testimonail'
+import Newsletter from '../components/Newletter'
 
 
 export const Home = () => {
@@ -12,6 +14,10 @@ export const Home = () => {
         <FearturedDestination/>
 
         <Exclusiveoffer/>
+
+        <Testimonail/>
+
+        <Newsletter/>
         
         
     </div>
