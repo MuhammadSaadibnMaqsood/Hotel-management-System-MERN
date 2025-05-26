@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { assets } from '../assets/assets'
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
+import { HotelContext } from "../Context/HotelContext";
+
 // import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 
 const BookIcon = () => (
@@ -22,11 +24,14 @@ const Navbar = () => {
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const {search,setsearch} = useContext(HotelContext);
+
 
     const { openSignIn } = useClerk();
     const { user } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
+
     useEffect(() => {
 
         if(location.pathname !== '/'){
@@ -43,6 +48,10 @@ const Navbar = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [location.pathname]);
+
+    // const handleChange = ()=>{
+
+    // }
 
     return (
 
@@ -69,7 +78,7 @@ const Navbar = () => {
 
             {/* Desktop Right */}
             <div className="hidden md:flex items-center gap-4">
-                <img src={assets.searchIcon} alt="searchicon" className={`${isScrolled && 'invert'} transition-all duration-500 h-7`} />
+                <img src={assets.searchIcon} alt="searchicon" className={`${isScrolled && 'invert'} transition-all duration-500 h-7 cursor-pointer` } onClick={()=>(navigate('/rooms'), setsearch(!search)) }/>
                 {user ?
                     (<UserButton>
                         <UserButton.MenuItems>

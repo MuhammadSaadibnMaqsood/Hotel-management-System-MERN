@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Footer from './components/Footer';
 import AllRoom from './pages/AllRoom';
 import RoomDetail from './pages/RoomDetail';
+import MyBookings from './pages/MyBookings';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/rooms' element={<AllRoom />} />
           <Route path='/rooms/:id' element={<RoomDetail />} />
+          <Route path='/myBookings' element={<MyBookings />} />
 
         </Routes>
       </div>
