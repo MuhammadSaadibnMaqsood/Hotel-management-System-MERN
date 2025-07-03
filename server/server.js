@@ -12,7 +12,7 @@ app.use(cors()) //enable cross-origin resourse sharing
 app.use(express.json())
 app.use(clerkMiddleware()) //middle ware
 
-// app.use('/api/clerk',webBook)
+app.use('/api/clerk',webBook)
 const port = process.env.port || 3000;
 
 app.get('/', (req, res) => {
