@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from '../models/user.js'
 import { Webhook } from "svix";
 
 const webBook = async (req, res) => {  // Fix: req, res as parameters
@@ -9,7 +9,7 @@ const webBook = async (req, res) => {  // Fix: req, res as parameters
             'svix-id': req.headers['svix-id'],
             'svix-timestamp': req.headers['svix-timestamp'],
             'svix-signature': req.headers['svix-signature'],
-        };  // Fix: Correct headers object and key names (timestamp, not timestamps)
+        }; 
 
         // Verifying signature to ensure it's from Clerk
         await wHook.verify(JSON.stringify(req.body), headers);
