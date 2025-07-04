@@ -3,8 +3,9 @@ import { Webhook } from "svix";
 
 const webBook = async (req, res) => {  // Fix: req, res as parameters
     try {
-        const wHook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);  // Fix: Correct spelling of Webhook
-
+        const wHook = new Webhook(process.env.CLERK_WEBBOOK_SECRET);  // Fix: Correct spelling of Webhook
+        console.log(process.env.CLERK_WEBBOOK_SECRET);
+        
         const headers = {
             'svix-id': req.headers['svix-id'],
             'svix-timestamp': req.headers['svix-timestamp'],
