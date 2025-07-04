@@ -25,7 +25,8 @@ const webBook = async (req, res) => {  // Fix: req, res as parameters
             _id: data.id,  // Fix: use data.id (assuming it's the Clerk ID)
             email: data.email_addresses[0].email_address,
             username: data.first_name + ' ' + data.last_name,
-            image: data.image_url
+            image: data.image_url,
+            recentSearchCities: []
         };
 
         // Switch case to handle different events
@@ -34,19 +35,19 @@ const webBook = async (req, res) => {  // Fix: req, res as parameters
                 await User.create(userData);
                 break;
             }
-            case 'user.updated': {  // Fix: changed from user.update to user.updated
+            case 'user.updated': {  
                 await User.findByIdAndUpdate(data.id, userData);
                 break;
             }
             case 'user.deleted': {
-                await User.findByIdAndDelete(data.id);  // Fix: Correct method name
+                await User.findByIdAndDelete(data.id);  
                 break;
             }
             default:
                 break;
         }
 
-        res.json({ success: true, message: 'Webhook Received' });  // Fix: Corrected spelling of true
+        res.json({ success: true, message: 'Webhook Received' }); 
 
     } catch (error) {
         console.log(error.message);
