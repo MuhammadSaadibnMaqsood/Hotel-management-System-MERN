@@ -5,12 +5,15 @@ const webBook = async (req, res) => {  // Fix: req, res as parameters
     try {
         const wHook = new Webhook(process.env.CLERK_WEBBOOK_SECRET);  // Fix: Correct spelling of Webhook
         console.log(process.env.CLERK_WEBBOOK_SECRET);
-        
+
         const headers = {
             'svix-id': req.headers['svix-id'],
             'svix-timestamp': req.headers['svix-timestamp'],
             'svix-signature': req.headers['svix-signature'],
-        }; 
+        };
+
+        console.log('Incoming Headers:', req.headers);
+
 
         // Verifying signature to ensure it's from Clerk
         await wHook.verify(JSON.stringify(req.body), headers);
