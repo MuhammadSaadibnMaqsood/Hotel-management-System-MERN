@@ -6,10 +6,10 @@ const userSchema = mongoose.Schema({
     email: { type: String, required: true },
     image: { type: String, required: true },
     role: { type: String, enum: ['user', 'hotelowner'], default: 'user' },
-    recentSearchCities: { type: String, required: false },
+    recentSearchCities: { type: String, required: true, default: [] },
 
-},{timestamps:true});
+}, { timestamps: true });
 
-const User = mongoose.model('Users',userSchema);
+const User = mongoose.model('Users', userSchema);
 
 export default User
