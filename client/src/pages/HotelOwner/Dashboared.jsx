@@ -5,7 +5,12 @@ import { dashboardDummyData } from '../../assets/assets'
 import { tr } from 'framer-motion/client'
 
 const Dashboared = () => {
-    const [DashboardData, setDashboardData] = useState(dashboardDummyData)
+    const [DashboardData, setDashboardData] = useState(dashboardDummyData);
+
+
+    const fetchData = async()=>{
+        
+    }
 
     return (
         <div>
