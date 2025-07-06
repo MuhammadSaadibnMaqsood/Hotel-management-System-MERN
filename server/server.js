@@ -7,6 +7,8 @@ import webBook from './controller/clerkWebBook.js';
 import userRouter from './routes/userRouter.js';
 import hotelRouter from './routes/hotelRouter.js';
 import connetCloudinary from './configs/cloudinary.js';
+import roomRouter from './routes/roomRoutes.js';
+import bookingRouter from './routes/bookingRouter.js';
 
 //connectivity
 
@@ -33,6 +35,8 @@ app.get('/', (req, res) => {
 })
 app.use('/api/user', userRouter);
 app.use('/api/hotels', hotelRouter);
+app.use('/api/rooms', roomRouter);
+app.use('/api/bookings', bookingRouter);
 
 
 app.listen(port, () => {

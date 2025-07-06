@@ -1,8 +1,9 @@
-import React, { useEffect, useState,useContext } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { assets } from '../assets/assets'
-import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
+import { useClerk, UserButton } from "@clerk/clerk-react";
 import { HotelContext } from "../Context/HotelContext";
+import { useAppContext } from "../Context/AppContext";
 
 // import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 
@@ -24,23 +25,26 @@ const Navbar = () => {
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const {search,setsearch} = useContext(HotelContext);
+    const { search, setsearch } = useContext(HotelContext);
 
 
     const { openSignIn } = useClerk();
-    const { user } = useUser();
-    const navigate = useNavigate();
     const location = useLocation();
+
+    const { user, navigate, isOwner, setshowHotelReg } = useAppContext()
+
+    // console.log(isOwner);
+
 
     useEffect(() => {
 
-        if(location.pathname !== '/'){
+        if (location.pathname !== '/') {
             setIsScrolled(true);
         }
-        else{
+        else {
             setIsScrolled(false);
         }
-        setIsScrolled(prev => location.pathname !== '/'? true:false);
+        setIsScrolled(prev => location.pathname !== '/' ? true : false);
 
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -49,9 +53,6 @@ const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [location.pathname]);
 
-    // const handleChange = ()=>{
-
-    // }
 
     return (
 
@@ -71,36 +72,36 @@ const Navbar = () => {
                         <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                     </a>
                 ))}
-                <button onClick={()=> navigate('/owner')} className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
-                    Dashboard
-                </button>
+                {user && <button onClick={() => isOwner ? navigate('/owner') : setshowHotelReg(true)} className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
+                    {isOwner ? 'Dashboard' : 'List your hotel'}
+                </button>}
             </div>
 
             {/* Desktop Right */}
             <div className="hidden md:flex items-center gap-4">
-                <img src={assets.searchIcon} alt="searchicon" className={`${isScrolled && 'invert'} transition-all duration-500 h-7 cursor-pointer` } onClick={()=>(navigate('/rooms'), setsearch(!search)) }/>
+                <img src={assets.searchIcon} alt="searchicon" className={`${isScrolled && 'invert'} transition-all duration-500 h-7 cursor-pointer`} onClick={() => (navigate('/rooms'), setsearch(!search))} />
                 {user ?
                     (<UserButton>
                         <UserButton.MenuItems>
-                            <UserButton.Action label="My-Booking" labelIcon={<BookIcon/>} onClick={() => navigate('/myBookings')} />
+                            <UserButton.Action label="My-Booking" labelIcon={<BookIcon />} onClick={() => navigate('/myBookings')} />
                         </UserButton.MenuItems>
                     </UserButton>)
                     :
                     (<button onClick={openSignIn} type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium  text-sm px-8 py-2.5 rounded-full ml-4 transition-all duration-500 text-center me-2 mb-2 mt-1.5">
-                    Login</button>)
+                        Login</button>)
                 }
-                
+
 
             </div>
 
             {/* Mobile Menu Button */}
-           
+
             <div className="flex items-center gap-3 md:hidden">
-                 {user && <UserButton>
-                        <UserButton.MenuItems>
-                            <UserButton.Action label="My-Booking" labelIcon={<BookIcon/>} onClick={() => navigate('/myBookings')} />
-                        </UserButton.MenuItems>
-                    </UserButton>}
+                {user && <UserButton>
+                    <UserButton.MenuItems>
+                        <UserButton.Action label="My-Booking" labelIcon={<BookIcon />} onClick={() => navigate('/myBookings')} />
+                    </UserButton.MenuItems>
+                </UserButton>}
                 <img onClick={() => { setIsMenuOpen(!isMenuOpen) }} src={assets.menuIcon} alt="menuIcon" className={`${isScrolled && 'invert'} h-4`} />
             </div>
 
@@ -116,11 +117,11 @@ const Navbar = () => {
                     </a>
                 ))}
 
-                { user && <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all" onClick={()=> navigate('/owner')}>
-                    Dashborad
+                {user && <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all" onClick={() => isOwner ? navigate('/owner') : setshowHotelReg(true)}>
+                    {isOwner ? 'Dashboard' : 'List your hotel'}
                 </button>}
 
-               { !user && <button onClick={openSignIn} type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium  text-sm px-8 py-2.5 rounded-full ml-4 transition-all duration-500 text-center me-2 mb-2 mt-1.5">
+                {!user && <button onClick={openSignIn} type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium  text-sm px-8 py-2.5 rounded-full ml-4 transition-all duration-500 text-center me-2 mb-2 mt-1.5">
                     Login</button>}
             </div>
         </nav>

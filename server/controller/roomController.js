@@ -52,7 +52,7 @@ export const createRoom = async (req, res) => {
 
 // function to get all room
 
-const getRoom = async (req, res) => {
+export const getRoom = async (req, res) => {
     try {
         const rooms = await Room.find({ isAvailable: true }).populate({
             path: 'hotel',
@@ -78,7 +78,7 @@ const getRoom = async (req, res) => {
 
 // function to get room to a spicfic hotel 
 
-const getOwnerRoom = async (req, res) => {
+export const getOwnerRoom = async (req, res) => {
     try {
         const hotelData = await Hotel.find({ owner: req.auth.userId });
 
@@ -105,7 +105,7 @@ const getOwnerRoom = async (req, res) => {
 
 // function to toggle room availability
 
-const toggleRoomAvaibility = async (req, res) => {
+export const toggleRoomAvaibility = async (req, res) => {
     try {
         const { roomID } = req.body;
 

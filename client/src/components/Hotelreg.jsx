@@ -1,12 +1,15 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { useAppContext } from '../Context/AppContext'
 
 const Hotelreg = () => {
+
+    const {setshowHotelReg} = useAppContext();
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm'>
             <form className='relative flex bg-white rounded-2xl max-w-4xl w-full mx-4 shadow-lg overflow-hidden animate-fadeIn'>
                 {/* Close Icon */}
-                <img
+                <img onClick={()=> setshowHotelReg(false)}
                     src={assets.closeIcon}
                     alt="close icon"
                     className='absolute top-4 right-4 h-6 w-6 cursor-pointer hover:scale-110 transition-transform duration-300'
