@@ -119,9 +119,9 @@ export const getHotelBooking = async (req, res) => {
         //finding bookings using hotel id
         const bookings = await Booking.find({ hotel: hotel._id }).populate('room hotel user').sort({ createdAt: -1 });
 
-        if (bookings.length === 0) {
-            return res.status(404).json({ success: false, message: 'No Bookings found' });
-        }
+        // if (bookings.length === 0) {
+        //     return res.status(404).json({ success: false, message: 'No Bookings found' });
+        // }
         //total booking
         const totalBookings = bookings.length
         //total revenue

@@ -1,23 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
-import { dashboardDummyData } from '../../assets/assets'
-import { tr } from 'framer-motion/client'
+import { useAppContext } from '../../Context/AppContext'
+
 
 const Dashboared = () => {
-    const [DashboardData, setDashboardData] = useState(dashboardDummyData);
 
+    const { axios, getToken, user, currency, toast } = useAppContext();
 
-    const fetchData = async()=>{
-        
+    const [DashboardData, setDashboardData] = useState({
+        bookings: [],
+        totalRevenue: 0,
+        totalBookings: 0
+    });
+
+    // fetching data from backend 
+
+    const fetchData = async () => {
+        try {
+            const { data } = await axios.get('/api/bookings/hotel', { headers: { Authorization: `Bearer ${await getToken()}` } });
+            // console.log(data);
+
+            if (data.success) {
+                setDashboardData(data.DashboardData);
+
+            }
+            else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+            console.log(error.message);
+
+        }
+
     }
+
+    useEffect(() => {
+        if (user) {
+            
+            fetchData();
+        }
+        
+    }, [user])
+
 
     return (
         <div>
             <Title align={'left'} title={'Dashboard'} subTitle={'Monitor room listing, track bookings and analyze revenue-all in one place. Stay updated with real time insights to ensure smooth operation'} />
             <div className='flex gap-4 my-8'>
                 {/* Total bookings  */}
-                <div className='bg-gradient-to-r from-blue-50 via-white to-blue-100 border border-blue-200 rounded-xl shadow-md flex p-4 pr-8 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105'>
+                <div className='bg-gradient-to-r from-blue-50 via-white to-blue-100 border border-blue-200 rounded-xl shadow-md flex p-4 pr-8 hover:shadow-lg  cursor-pointer transform hover:scale-105 transition duration-400 '>
                     <img src={assets.totalBookingIcon} alt="total booking icon" className='max-sm:hidden h-10 opacity-80' />
                     <div className='flex flex-col sm:ml-4 font-medium'>
                         <p className='text-blue-600 text-lg font-semibold tracking-wide'>Total Bookings</p>
@@ -26,11 +59,11 @@ const Dashboared = () => {
                 </div>
 
                 {/* Total revenue  */}
-                <div className='bg-gradient-to-r from-blue-50 via-white to-blue-100 border border-blue-200 rounded-xl shadow-md flex p-4 pr-8 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105'>
+                <div className='bg-gradient-to-r from-blue-50 via-white to-blue-100 border border-blue-200 rounded-xl shadow-md flex p-4 pr-8 hover:shadow-lg   cursor-pointer transform hover:scale-105 transition duration-400'>
                     <img src={assets.totalRevenueIcon} alt="total revenue icon" className='max-sm:hidden h-10 opacity-80' />
                     <div className='flex flex-col sm:ml-4 font-medium'>
                         <p className='text-blue-600 text-lg font-semibold tracking-wide'>Total Revenue</p>
-                        <p className='text-gray-600 text-base'>$ {DashboardData.totalRevenue}</p>
+                        <p className='text-gray-600 text-base'>{currency} {DashboardData.totalRevenue}</p>
                     </div>
                 </div>
             </div>
@@ -51,7 +84,7 @@ const Dashboared = () => {
                             <tr key={index} className='hover:bg-blue-50/30 transition-colors duration-200'>
                                 <td className='py-3 px-4 text-gray-700'>{item.user.username}</td>
                                 <td className='py-3 px-4 text-gray-700 max-sm:hidden'>{item.room.roomType}</td>
-                                <td className='py-3 px-4 text-gray-700 text-center'>$ {item.totalPrice}</td>
+                                <td className='py-3 px-4 text-gray-700 text-center'>{currency} {item.totalPrice}</td>
                                 <td className='py-3 px-4 text-center'>
                                     <span className={`inline-block py-1 px-3 text-xs font-medium rounded-full ${item.isPaid ? 'bg-green-200 text-green-800' : 'bg-amber-200 text-yellow-800'} shadow-sm`}>
                                         {item.isPaid ? 'Completed' : 'Pending'}

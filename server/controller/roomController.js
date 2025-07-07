@@ -80,7 +80,7 @@ export const getRoom = async (req, res) => {
 
 export const getOwnerRoom = async (req, res) => {
     try {
-        const hotelData = await Hotel.find({ owner: req.auth.userId });
+        const hotelData = await Hotel.findOne({ owner: req.auth.userId });
 
         if (hotelData === 0) {
             return res.status(404).json({ success: false, message: 'No Owner found' });
@@ -107,7 +107,7 @@ export const getOwnerRoom = async (req, res) => {
 
 export const toggleRoomAvaibility = async (req, res) => {
     try {
-        const { roomID } = req.body;
+        const { roomID } = req.body;        
 
         if (!roomID) {
             return res.status(400).json({ success: false, messsage: 'kindly provide room id' });
