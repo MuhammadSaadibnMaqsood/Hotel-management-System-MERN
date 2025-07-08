@@ -1,57 +1,92 @@
-import React, { useState, useContext, useEffect } from 'react'
-import Title from '../components/Title'
-import HotelCard from '../components/HotelCard'
-import { assets, facilityIcons, roomsDummyData } from '../assets/assets'
-import { useNavigate } from 'react-router-dom'
-import StarRating from '../components/StarRating'
+import React, { useState, useContext } from 'react';
+import Title from '../components/Title';
+import { assets, facilityIcons } from '../assets/assets';
+import StarRating from '../components/StarRating';
 import { HotelContext } from "../Context/HotelContext";
+import { useAppContext } from '../Context/AppContext';
+import { useSearchParams } from 'react-router-dom';
 
+const CheckBox = ({ label, selected = false, onChange = () => { } }) => (
+    <label className='flex gap-3 items-center cursor-pointer mt-2 text-sm hover:text-blue-600 transition'>
+        <input
+            type="checkbox"
+            checked={selected}
+            onChange={(e) => onChange(e.target.checked, label)}
+        />
+        <span className='font-light select-none'>{label}</span>
+    </label>
+);
 
-const CheckBox = ({ label, selected = false, onChange = () => { } }) => {
-    return (
-        <label className='flex gap-3 items-center cursor-pointer mt-2 text-sm hover:text-blue-600 transition'>
-            <input type="checkbox" checked={selected} onChange={(e) => onChange(e.target.checked, label)} />
-            <span className='font-light select-none'>{label}</span>
-        </label>
-    )
-}
-
-const RadioButton = ({ label, selected = false, onChange = () => { } }) => {
-    return (
-        <label className='flex gap-3 items-center cursor-pointer mt-2 text-sm hover:text-blue-600 transition'>
-            <input name='sortOption' type="radio" checked={selected} onChange={() => onChange(label)} />
-            <span className='font-light select-none'>{label}</span>
-        </label>
-    )
-}
+const RadioButton = ({ label, selected = false, onChange = () => { } }) => (
+    <label className='flex gap-3 items-center cursor-pointer mt-2 text-sm hover:text-blue-600 transition'>
+        <input
+            name='sortOption'
+            type="radio"
+            checked={selected}
+            onChange={() => onChange(label)}
+        />
+        <span className='font-light select-none'>{label}</span>
+    </label>
+);
 
 const AllRoom = () => {
-    const navigate = useNavigate();
-    const [openFilters, setopenFilters] = useState(false);
-    const [FilterRoom, setFilterRoom] = useState([])
+    const { rooms, navigate } = useAppContext();
     const { search, setsearch } = useContext(HotelContext);
-
-
+    const [openFilters, setopenFilters] = useState(false);
+    const [selectFilters, setselectFilters] = useState({
+        roomtype: [],
+        priceRange: []
+    });
+    const [selectSort, setselectSort] = useState('');
 
     const roomTypes = ['Single Bed', 'Double Bed', 'Luxury Bed', 'Family Suite'];
     const priceRange = ['0 to 500', '500 to 1000', '1000 to 2000', '2000 to 3000'];
     const sortOption = ['Price Low to High', 'Price High to Low', 'Newest First'];
 
-    useEffect(() => {
-      setFilterRoom(roomsDummyData);
-    }, [])
-    
+    // Get destination query param from URL
+    const [searchParams] = useSearchParams();
+    const destinationQuery = searchParams.get('destination')?.trim().toLowerCase() || '';
+
 
     const handleChange = (e) => {
-        const str = e.target.value.toLowerCase();
+        setsearch(e.target.value);
+    };
 
-        const filter = roomsDummyData.filter(item => item.hotel.name.toLowerCase().includes(str))
-        setFilterRoom(filter);
+    const handleSort = (option) => {
+        setselectSort(option);
+    };
 
+    const matchRoomType = (room) => {
+        return selectFilters.roomtype.length === 0 || selectFilters.roomtype.includes(room.roomType);
+    };
 
+    const matchPriceRange = (room) => {
+        return selectFilters.priceRange.length === 0 || selectFilters.priceRange.some(range => {
+            const [min, max] = range.split('to').map(Number);
+            return room.pricePerNight >= min && room.pricePerNight <= max;
+        });
+    };
 
-    }
-
+    // ✅ Filter rooms by destination query param if present
+    const displayedRooms = rooms
+        .filter(room => {
+            if (destinationQuery) {
+                return (
+                    room.hotel.city?.toLowerCase().includes(destinationQuery) ||
+                    room.hotel.name?.toLowerCase().includes(destinationQuery)
+                );
+            }
+            return true;
+        })
+        .filter(room => !search || room.hotel.name.toLowerCase().includes(search.toLowerCase()))
+        .filter(matchRoomType)
+        .filter(matchPriceRange)
+        .sort((a, b) => {
+            if (selectSort === 'Price Low to High') return a.pricePerNight - b.pricePerNight;
+            if (selectSort === 'Price High to Low') return b.pricePerNight - a.pricePerNight;
+            if (selectSort === 'Newest First') return new Date(b.createdAt) - new Date(a.createdAt);
+            return 0;
+        });
 
     return (
         <>
@@ -67,9 +102,7 @@ const AllRoom = () => {
             )}
 
             <div className='flex flex-col-reverse lg:flex-row items-start justify-between pt-28 md:pt-35 px-4 md:px-16 lg:px-24 xl:px-32'>
-
-
-                {/* rooms */}
+                {/* Rooms */}
                 <div className='w-full lg:w-3/4'>
                     <Title
                         title={'Hotel Rooms'}
@@ -77,54 +110,71 @@ const AllRoom = () => {
                         align={'left'}
                     />
                     <div>
-                        {FilterRoom.map((room) => (
-                            <div key={room._id} className='group transition-all duration-300 hover:shadow-xl hover:bg-white flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300 last:pb-30 last:border-0 rounded-xl'>
+                        {displayedRooms.length > 0 ? (
+                            displayedRooms.map((room) => (
+                                <div
+                                    key={room._id}
 
-                                <img onClick={() => { navigate(`${room._id}`); scrollTo(0, 0); }}
-                                    src={room.images[0]} alt="room img"
-                                    className='max-h-65 md:w-1/2 rounded-xl shadow-lg object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105'
-                                    title='View room detail' />
+                                    className='group transition-all duration-300 hover:shadow-xl hover:bg-white flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300 last:pb-30 last:border-0 rounded-xl'
+                                >
+                                    <img
+                                        onClick={() => { navigate(`/rooms/${room._id}`); scrollTo(0, 0); }}
+                                        src={room.images[0]}
+                                        alt="room img"
+                                        className='max-h-65 md:w-1/2 rounded-xl shadow-lg object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105'
+                                        title='View room detail'
+                                    />
 
-                                <div className='md:w-1/2 flex flex-col gap-2'>
-                                    <p className='text-gray-500'>{room.hotel.city}</p>
-                                    <p onClick={() => { navigate(`${room._id}`); scrollTo(0, 0); }}
-                                        className='text-gray-800 text-2xl font-semibold cursor-pointer hover:underline'>{room.hotel.name}</p>
+                                    <div className='md:w-1/2 flex flex-col gap-2'>
+                                        <p className='text-gray-500'>{room.hotel.city}</p>
+                                        <p
+                                            onClick={() => { navigate(`/rooms/${room._id}`); scrollTo(0, 0); }}
+                                            className='text-gray-800 text-2xl font-semibold cursor-pointer hover:underline'
+                                        >
+                                            {room.hotel.name}
+                                        </p>
 
-                                    <div className='flex items-center'>
-                                        <StarRating />
-                                        <p className='ml-2 text-sm text-gray-600'>200+ reviews</p>
+                                        <div className='flex items-center'>
+                                            <StarRating />
+                                            <p className='ml-2 text-sm text-gray-600'>200+ reviews</p>
+                                        </div>
+
+                                        <div className='flex items-center gap-1 text-gray-500 mt-2 text-sm'>
+                                            <img src={assets.locationIcon} alt="location icon" />
+                                            <span>{room.hotel.address}</span>
+                                        </div>
+
+                                        <div className='flex flex-wrap items-center mt-3 mb-6 gap-3'>
+                                            {room.amenities.map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    className='flex items-center gap-2 px-3 py-2 rounded-full bg-[#EEF2FF] text-gray-700 shadow-sm hover:shadow-md transition'
+                                                >
+                                                    <img src={facilityIcons[item]} alt={item} className='w-5 h-5' />
+                                                    <p className='text-xs'>{item}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <p className='text-xl font-semibold text-blue-700 mt-2'>
+                                            ${room.pricePerNight} <span className="text-gray-500 font-normal text-sm">/night</span>
+                                        </p>
                                     </div>
-
-                                    <div className='flex items-center gap-1 text-gray-500 mt-2 text-sm'>
-                                        <img src={assets.locationIcon} alt="location icon" />
-                                        <span>{room.hotel.address}</span>
-                                    </div>
-
-                                    <div className='flex flex-wrap items-center mt-3 mb-6 gap-3'>
-                                        {room.amenities.map((item, index) => (
-                                            <div key={index} className='flex items-center gap-2 px-3 py-2 rounded-full bg-[#EEF2FF] text-gray-700 shadow-sm hover:shadow-md transition'>
-                                                <img src={facilityIcons[item]} alt={item} className='w-5 h-5' />
-                                                <p className='text-xs'>{item}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <p className='text-xl font-semibold text-blue-700 mt-2'>
-                                        ${room.pricePerNight} <span className="text-gray-500 font-normal text-sm">/night</span>
-                                    </p>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p className='text-gray-600 text-lg mt-8'>No rooms found matching your criteria.</p>
+                        )}
                     </div>
                 </div>
 
-                {/* filters */}
+                {/* Filters */}
                 <div className='bg-white w-full lg:w-80 border border-gray-300 text-gray-600 max-lg:mb-8 min-lg:mt-16 rounded-xl shadow-md'>
                     <div className={`flex items-center justify-between px-5 py-3 border-b border-gray-200 bg-gray-50 ${openFilters && "border-b"}`}>
                         <p className='text-base font-semibold text-gray-800 tracking-wide'>FILTERS</p>
                         <div className='text-sm cursor-pointer font-medium text-blue-600 hover:underline transition'>
                             <span onClick={() => setopenFilters(!openFilters)} className='lg:hidden'>{openFilters ? 'HIDE' : 'SHOW'}</span>
-                            <span className='hidden lg:block'>CLEAR</span>
+                            <span onClick={() => setselectFilters({ roomtype: [], priceRange: [] })} className='hidden lg:block'>CLEAR</span>
                         </div>
                     </div>
 
@@ -132,28 +182,57 @@ const AllRoom = () => {
                         <div className='px-5 pt-5'>
                             <p className='font-semibold text-gray-800 pb-2 border-b border-gray-100 mb-3'>Popular filters</p>
                             {roomTypes.map((room, index) => (
-                                <CheckBox key={index} label={room} />
+                                <CheckBox
+                                    key={index}
+                                    label={room}
+                                    selected={selectFilters.roomtype.includes(room)}
+                                    onChange={(checked) =>
+                                        setselectFilters(prev => ({
+                                            ...prev,
+                                            roomtype: checked
+                                                ? [...prev.roomtype, room]
+                                                : prev.roomtype.filter(r => r !== room)
+                                        }))
+                                    }
+                                />
                             ))}
                         </div>
 
                         <div className='px-5 pt-5'>
                             <p className='font-semibold text-gray-800 pb-2 border-b border-gray-100 mb-3'>Price Range</p>
                             {priceRange.map((range, index) => (
-                                <CheckBox key={index} label={`$ ${range}`} />
+                                <CheckBox
+                                    key={index}
+                                    label={`$ ${range}`}
+                                    selected={selectFilters.priceRange.includes(range)}
+                                    onChange={(checked) =>
+                                        setselectFilters(prev => ({
+                                            ...prev,
+                                            priceRange: checked
+                                                ? [...prev.priceRange, range]
+                                                : prev.priceRange.filter(r => r !== range)
+                                        }))
+                                    }
+                                />
                             ))}
                         </div>
 
                         <div className='px-5 pt-5 pb-7'>
                             <p className='font-semibold text-gray-800 pb-2 border-b border-gray-100 mb-3'>Sort by</p>
                             {sortOption.map((option, index) => (
-                                <RadioButton key={index} label={option} />
+                                <RadioButton
+                                    key={index}
+                                    label={option}
+                                    selected={selectSort === option}
+                                    onChange={handleSort}
+                                />
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default AllRoom
+export default AllRoom;

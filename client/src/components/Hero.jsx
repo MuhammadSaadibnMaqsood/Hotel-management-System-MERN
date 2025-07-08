@@ -1,7 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { assets } from '../assets/assets'
+import { useAppContext } from '../Context/AppContext'
 
 const Hero = () => {
+  const { axios, getToken, navigate, setrecentSearchCities, recentSearchCities } = useAppContext();
+  const [Destination, setDestination] = useState('')
+
+  const onSearch = async (e) => {
+    e.preventDefault();
+    navigate(`/rooms?destination=${Destination}`);
+
+    // await axios.post('/api/user/stored-recent-search', { recentSearchCities }, { headers: { Authorization: `Bearer ${await getToken()}` } });
+
+
+    setrecentSearchCities((prev) => {
+      const updated = [...prev, Destination];
+      if (updated.length > 3) {
+        updated.shift();
+      }
+      return updated;
+    })
+  }
   return (
     <div
       className='h-screen bg-no-repeat bg-center bg-cover w-full relative overflow-hidden
@@ -22,13 +41,15 @@ const Hero = () => {
           unparallel luxury and comfort await await at the world most exclusive hotel and resort. Start your journey today.
         </p>
         <div className='bg-white w-[800px] m-7 rounded-2xl formDiv'>
-          <form action="" className='flex flex-wrap'>
+          <form onSubmit={onSearch} className='flex flex-wrap'>
             <div className='p-4 text-black'>
               <label className='text-black flex gap-2 items-center m-2 text-[17px]' htmlFor="destination">
                 <img src={`${assets.calenderIcon}`} alt="calendericon" /> Destination
               </label>
 
               <input
+                onChange={e => setDestination(e.target.value)}
+                value={Destination}
                 type="text"
                 id="destination"
                 name="destination"
@@ -62,7 +83,7 @@ const Hero = () => {
               <input type="number" max={1} min={6} id='guest' className='text-black p-2 rounded-[10px]' placeholder='0' name='guest' htmlFor="guest" />
             </div>
             <div className='p-4 text-black '>
-              <button type="button" className="text-white flex items-center bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium  text-sm px-6 py-2.5 rounded-full  transition-all duration-500 text-center me-2 mb-2 mt-1.5">
+              <button type="submit" className="text-white flex items-center bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium  text-sm px-6 py-2.5 rounded-full  transition-all duration-500 text-center me-2 mb-2 mt-1.5">
                 <img src={assets.searchIcon} alt="" />Search</button>
             </div>
 

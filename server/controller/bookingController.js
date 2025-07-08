@@ -39,7 +39,7 @@ export const checkAvaibilityAPI = async (req, res) => {
 
 export const createBooking = async (req, res) => {
     try {
-        const { room, checkInDate, checkOutDate, guest } = req.body;
+        const { room, checkInDate, checkOutDate, guests } = req.body;
 
         const user = req.user._id;
 
@@ -71,7 +71,8 @@ export const createBooking = async (req, res) => {
             hotel: roomData.hotel._id,
             checkInDate,
             checkOutDate,
-            guest: +guest
+            guest: +guests,
+            totalPrice: totalPrice
 
         })
 

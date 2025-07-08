@@ -18,7 +18,7 @@ export const AppProvider = ({ children }) => {
 
     const [isOwner, setIsOwner] = useState(false);
     const [showHotelReg, setshowHotelReg] = useState(false);
-    const [searchCities, setsearchCities] = useState([]);
+    const [recentSearchCities, setrecentSearchCities] = useState([]);
     const [rooms, setRooms] = useState([]);
 
 
@@ -29,13 +29,16 @@ export const AppProvider = ({ children }) => {
             if (data.success) {
                 setRooms(data.rooms);
 
+
             } else {
                 console.log(data.message);
                 toast.error(data.message)
+
             }
         } catch (error) {
             console.log(error.message);
-            toast.error(error.message)
+            toast.error(error.message);
+            console.log('I am a room error');
 
         }
     }
@@ -51,7 +54,7 @@ export const AppProvider = ({ children }) => {
 
                     setIsOwner(true);
                 }
-                setsearchCities(data.recentSearchCities);
+                setrecentSearchCities(data.recentSearchCities);
             } else {
                 setTimeout(() => {
                     fetchUser();
@@ -71,12 +74,16 @@ export const AppProvider = ({ children }) => {
         if (user) {
             fetchUser();
         }
+
+     
+        
     }, [user]);
 
     //USEEFFECT TO FETCH 
     useEffect(() => {
 
         fetchRoom();
+        console.log(rooms);
 
     }, []);
 
@@ -94,8 +101,8 @@ export const AppProvider = ({ children }) => {
         user,
         getToken,
         axios,
-        searchCities,
-        setsearchCities,
+        recentSearchCities,
+        setrecentSearchCities,
         setshowHotelReg,
         rooms,
         setRooms
