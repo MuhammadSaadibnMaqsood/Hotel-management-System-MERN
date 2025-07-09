@@ -31,20 +31,21 @@ const MyBookings = () => {
 
     }, [user]);
 
-    // const handlePayment = async (bookingId) => {
-    //     try {
-    //         const { data } = await axios.post('/api/bookings/stripe-payment', { bookingId }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+    const handlePayment = async (bookingId) => {
+        try {
+            const { data } = await axios.post('/api/bookings/stripe-payment', { bookingId }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+            console.log(data);
+            
+            if (data.success) {
+                window.location.href = data.url;
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
 
-    //         if (data.success) {
-    //             window.location.href = data.url;
-    //         } else {
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.message)
-
-    //     }
-    // }
+        }
+    }
     return (
         <div className='py-28 md:pb-35 md:pt-32 px-4 md:px-16 lg:px-24 xl:px-32 bg-gradient-to-br from-blue-50 via-white to-gray-50 min-h-screen'>
             <Title title={'My Bookings'} subTitle={'Easily manage your past, current, or future reservations. Plan your trips seamlessly with just a few clicks.'} align={'left'} />
@@ -106,7 +107,7 @@ const MyBookings = () => {
                                     </span>
                                 </div>
                                 {!booking.isPaid && (
-                                    <button  className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
+                                    <button onClick={()=> handlePayment(booking._id)} className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
                                         Pay Now
                                     </button>
                                 )}

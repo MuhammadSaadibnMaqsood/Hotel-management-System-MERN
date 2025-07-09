@@ -19,7 +19,7 @@ const Dashboared = () => {
     const fetchData = async () => {
         try {
             const { data } = await axios.get('/api/bookings/hotel', { headers: { Authorization: `Bearer ${await getToken()}` } });
-            // console.log(data);
+            console.log(data);
 
             if (data.success) {
                 setDashboardData(data.DashboardData);

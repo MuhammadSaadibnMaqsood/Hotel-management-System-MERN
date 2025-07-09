@@ -13,6 +13,8 @@ export const createRoom = async (req, res) => {
         if (!hotel) {
             return res.status(404).json({ success: false, message: 'Hotel not found' });
         }
+        console.log(hotel);
+        
         //checking files
 
         if (!req.files || req.files.length === 0) {

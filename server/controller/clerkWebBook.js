@@ -1,10 +1,9 @@
-import User from '../models/user.js'
+import User from '../models/user.js';
 import { Webhook } from "svix";
 
 const webBook = async (req, res) => {
     try {
         const wHook = new Webhook(process.env.CLERK_WEBBOOK_SECRET);
-        console.log(process.env.CLERK_WEBBOOK_SECRET);
 
         const headers = {
             'svix-id': req.headers['svix-id'],
@@ -12,17 +11,15 @@ const webBook = async (req, res) => {
             'svix-signature': req.headers['svix-signature'],
         };
 
-        console.log('Incoming Headers:', req.headers);
-
-        // Clerk needs the raw body, NOT JSON.stringified
-        await wHook.verify(req.body, headers);
-
-        const { data, type } = JSON.parse(req.body);
+        // Clerk sends raw body as buffer — convert to string before parsing
+        const payloadString = req.body.toString();
+        const evt = wHook.verify(payloadString, headers);
+        const { data, type } = evt;
 
         const userData = {
             _id: data.id,
             email: data.email_addresses[0].email_address,
-            username: data.first_name + ' ' + data.last_name,
+            username: `${data.first_name} ${data.last_name}`,
             image: data.image_url,
         };
 
@@ -40,11 +37,10 @@ const webBook = async (req, res) => {
                 break;
         }
 
-        res.json({ success: true, message: 'Webhook Received' });
-
+        return res.status(200).json({ success: true, message: 'Webhook processed' });
     } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message });
+        console.error('Webhook error:', error.message);
+        return res.status(500).json({ success: false, message: error.message });
     }
 };
 

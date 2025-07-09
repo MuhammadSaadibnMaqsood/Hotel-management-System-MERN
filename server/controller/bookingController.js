@@ -120,11 +120,12 @@ export const getHotelBooking = async (req, res) => {
             return res.status(404).json({ success: false, message: 'No hotel found' });
         }
         //finding bookings using hotel id
+        console.log(hotel._id);
+        
         const bookings = await Booking.find({ hotel: hotel._id }).populate('room hotel user').sort({ createdAt: -1 });
 
-        // if (bookings.length === 0) {
-        //     return res.status(404).json({ success: false, message: 'No Bookings found' });
-        // }
+        console.log(bookings);
+        
         //total booking
         const totalBookings = bookings.length
         //total revenue
@@ -138,62 +139,62 @@ export const getHotelBooking = async (req, res) => {
             }
         });
 
-
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
-// export const stripPayment = async (req, res) => {
-//     try {
-//         const { bookingId } = req.body;
 
-//         const booking = await Booking.findById(bookingId);
-//         if (!booking) {
-//             return res.status(404).json({ success: false, message: 'Booking not found' });
-//         }
+export const stripPayment = async (req, res) => {
+    try {
+        const { bookingId } = req.body;
 
-//         const roomData = await Room.findById(booking.room).populate('hotel');
-//         if (!roomData || !roomData.hotel) {
-//             return res.status(404).json({ success: false, message: 'Room or Hotel not found' });
-//         }
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
+        }
 
-//         const totalPrice = booking.totalPrice;
-//         if (!totalPrice) {
-//             return res.status(400).json({ success: false, message: 'Total price missing in booking' });
-//         }
+        const roomData = await Room.findById(booking.room).populate('hotel');
+        if (!roomData || !roomData.hotel) {
+            return res.status(404).json({ success: false, message: 'Room or Hotel not found' });
+        }
 
-//         const { origin } = req.headers;
+        const totalPrice = booking.totalPrice;
+        if (!totalPrice) {
+            return res.status(400).json({ success: false, message: 'Total price missing in booking' });
+        }
 
-//         const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+        const { origin } = req.headers;
 
-//         const line_items = [
-//             {
-//                 price_data: {
-//                     currency: 'usd',
-//                     product_data: {
-//                         name: roomData.hotel.name,
-//                     },
-//                     unit_amount: totalPrice * 100,
-//                 },
-//                 quantity: 1,
-//             },
-//         ];
+        const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 
-//         const session = await stripeInstance.checkout.sessions.create({
-//             line_items,
-//             mode: 'payment',
-//             success_url: `${origin}/loader/myBookings`,
-//             cancel_url: `${origin}/myBookings`,
-//             metadata: {
-//                 bookingId,
-//             },
-//         });
+        const line_items = [
+            {
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: roomData.hotel.name,
+                    },
+                    unit_amount: totalPrice * 100,
+                },
+                quantity: 1,
+            },
+        ];
 
-//         return res.status(200).json({ success: true, url: session.url });
+        const session = await stripeInstance.checkout.sessions.create({
+            line_items,
+            mode: 'payment',
+            success_url: `${origin}/loader/myBookings`,
+            cancel_url: `${origin}/myBookings`,
+            metadata: {
+                bookingId,
+            },
+        });
 
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ success: false, message: 'Payment failed' });
-//     }
-// };
+        return res.status(200).json({ success: true, url: session.url });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Payment failed' });
+    }
+};

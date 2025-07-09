@@ -9,7 +9,7 @@ bookingRouter.post('/check-avaibility', checkAvaibilityAPI);
 bookingRouter.post('/book', protect, createBooking);
 bookingRouter.get('/user', protect, getUserBookings);
 bookingRouter.get('/hotel', protect, getHotelBooking);
-// bookingRouter.post('/stripe-payment', protect, stripPayment);
+bookingRouter.post('/stripe-payment', protect, stripPayment);
 
 
 export default bookingRouter;
