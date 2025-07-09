@@ -1,9 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Title from '../components/Title'
-import { assets, userBookingsDummyData } from '../assets/assets'
+import { assets } from '../assets/assets'
+import { useAppContext } from '../Context/AppContext'
+import toast from 'react-hot-toast'
 
 const MyBookings = () => {
-    const [Bookings, setBookings] = useState(userBookingsDummyData);
+    const [Bookings, setBookings] = useState([]);
+    const { user, getToken, axios } = useAppContext();
+    const fetchData = async () => {
+        try {
+            const { data } = await axios.get('/api/bookings/user', { headers: { Authorization: `Bearer ${await getToken()}` } });
+
+            // console.log(data);
+
+            if (data.success) {
+                setBookings(data.Bookings);
+            }
+            else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
+
+    useEffect(() => {
+
+        fetchData();
+        // console.log(Bookings);
+
+    }, [user]);
+
+    const handlePayment = async (bookingId) => {
+        try {
+            const { data } = await axios.post('/api/bookings/stripe-payment', { bookingId }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+
+            if (data.success) {
+                window.location.href = data.url;
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+
+        }
+    }
     return (
         <div className='py-28 md:pb-35 md:pt-32 px-4 md:px-16 lg:px-24 xl:px-32 bg-gradient-to-br from-blue-50 via-white to-gray-50 min-h-screen'>
             <Title title={'My Bookings'} subTitle={'Easily manage your past, current, or future reservations. Plan your trips seamlessly with just a few clicks.'} align={'left'} />
@@ -34,7 +75,7 @@ const MyBookings = () => {
                                     </div>
                                     <div className="flex items-center gap-1 text-sm text-gray-600">
                                         <img src={assets.guestsIcon} alt="guests" className="h-4 w-4" />
-                                        <span>{booking.guests} guest(s)</span>
+                                        <span>{booking.guests} guest({`${booking.guest}`})</span>
                                     </div>
                                     <p className="text-base font-medium text-green-600">Total: ${booking.totalPrice}</p>
                                 </div>
@@ -65,7 +106,7 @@ const MyBookings = () => {
                                     </span>
                                 </div>
                                 {!booking.isPaid && (
-                                    <button className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
+                                    <button onClick={()=>handlePayment(booking._id)} className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
                                         Pay Now
                                     </button>
                                 )}

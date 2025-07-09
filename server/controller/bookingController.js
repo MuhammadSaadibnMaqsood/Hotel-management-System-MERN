@@ -1,8 +1,10 @@
 // Function to check avaibility
 
+import transporter from "../configs/nodemailer.js";
 import Booking from "../models/booking.js"
 import Room from "../models/Room.js";
 import Hotel from "../models/Room.js";
+import stripe from 'stripe'
 
 const checkAvaibility = async ({ checkInDate, checkOutDate, room }) => {
     try {
@@ -140,5 +142,49 @@ export const getHotelBooking = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+export const stripPayment = async (req, res) => {
+    try {
+        const { bookingId } = req.body
+        const booking = await Booking.findById(bookingId);
+        const roomData = await Room.findById(booking.hotel).populate('hotel');
+        const totalPrice = booking.totalPrice;
+
+        const { origin } = req.headers
+
+        const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+
+        const line_item = [
+            {
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: roomData.hotel.name
+                    },
+                    unit_amount: totalPrice * 100
+                },
+
+                quantity: 1
+            }
+        ]
+        // createcheck out session 
+
+        const session = await stripeInstance.checkout.sessions.create({
+            line_items,
+            mode: 'payment',
+            success_url: `${origin}/loader/myBookings`,
+            cancel_url: `${origin}/myBookings`,
+            metadata: {
+                bookingId,
+
+            }
+        })
+
+        return res.status(200).json({ success: true, url: session.url })
+
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Payment failed' })
     }
 }
