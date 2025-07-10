@@ -55,7 +55,7 @@ export const createBooking = async (req, res) => {
         }
 
         const roomData = await Room.findById(room).populate('hotel');
-        let totalPrice = roomData.pricePerNight;
+        let pricePerNight = roomData.pricePerNight;
 
         //count Totalprice
 
@@ -65,12 +65,12 @@ export const createBooking = async (req, res) => {
 
         let night = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-        console.log(night);
+        // console.log(night);
         
 
-        totalPrice *= night;
+        let totalPrice = pricePerNight * night;
 
-        console.log(totalPrice);
+        // console.log(totalPrice);
         
 
         const booking = await Booking.create({
@@ -80,7 +80,7 @@ export const createBooking = async (req, res) => {
             checkInDate,
             checkOutDate,
             guest: +guests,
-            totalPrice: +totalPrice
+            totalPrice: totalPrice
 
         })
 
@@ -148,6 +148,7 @@ export const getHotelBooking = async (req, res) => {
 
         // //total revenue
         const totalRevenue = filteredBookings.reduce((acc, booking) => acc + booking.totalPrice, 0);
+        
 
         // console.log(totalRevenue);
 

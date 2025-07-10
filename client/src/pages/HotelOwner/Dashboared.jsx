@@ -51,11 +51,11 @@ const Dashboared = () => {
 
     }, [user])
 
-    // useEffect(() => {
-    //     console.log(DashboardData);
-    //     console.log(totalBookings);
-    //     console.log(totalRevenue);
-    // }, [DashboardData])
+    useEffect(() => {
+        console.log(DashboardData);
+        console.log(totalBookings);
+        console.log(totalRevenue);
+    }, [DashboardData])
 
 
 
@@ -98,7 +98,7 @@ const Dashboared = () => {
                             <tr key={index} className='hover:bg-blue-50/30 transition-colors duration-200'>
                                 {/* <td className='py-3 px-4 text-gray-700'>{item.user.username}</td> */}
                                 <td className='py-3 px-4 text-gray-700 max-sm:hidden'>{item.room.roomType}</td>
-                                <td className='py-3 px-4 text-gray-700 text-center'>{currency} {item.room.pricePerNight}</td>
+                                <td className='py-3 px-4 text-gray-700 text-center'>{currency} {item.totalPrice}</td>
                                 <td className='py-3 px-4 text-center'>
                                     <span className={`inline-block py-1 px-3 text-xs font-medium rounded-full ${item.isPaid ? 'bg-green-200 text-green-800' : 'bg-amber-200 text-yellow-800'} shadow-sm`}>
                                         {item.isPaid ? 'Completed' : 'Pending'}

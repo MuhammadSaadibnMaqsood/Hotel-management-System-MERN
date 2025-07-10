@@ -31,6 +31,8 @@ const RoomDetail = () => {
                 return
             }
             const { data } = await axios.post('/api/bookings/check-avaibility', { room: id, checkInDate, checkOutDate }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+            // console.log(data);
+            
             if (data.success) {
                 if (data.isAvailable) {
                     setisAvailable(true);
