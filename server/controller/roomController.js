@@ -65,9 +65,12 @@ export const getRoom = async (req, res) => {
             }
         }).sort({ createdAt: -1 })
 
-        if (rooms.length === 0) {
-            return res.status(404).json({ success: false, message: 'No room available' });
-        }
+        console.log(rooms);
+        
+
+        // if (rooms.length === 0) {
+        //     return res.status(404).json({ success: false, message: 'No room available' });
+        // }
 
         return res.status(200).json({ success: true, rooms });
 

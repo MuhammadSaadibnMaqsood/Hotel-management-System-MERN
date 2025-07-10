@@ -65,7 +65,13 @@ export const createBooking = async (req, res) => {
 
         let night = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
+        console.log(night);
+        
+
         totalPrice *= night;
+
+        console.log(totalPrice);
+        
 
         const booking = await Booking.create({
             user,
@@ -74,7 +80,7 @@ export const createBooking = async (req, res) => {
             checkInDate,
             checkOutDate,
             guest: +guests,
-            totalPrice: totalPrice
+            totalPrice: +totalPrice
 
         })
 
@@ -115,25 +121,40 @@ export const getUserBookings = async (req, res) => {
 export const getHotelBooking = async (req, res) => {
     try {
         //find hotel first by userID
-        const hotel = await Hotel.findOne({ owner: req.auth._id });
-        if (!hotel) {
+        const allBookings = await Booking.find().populate('hotel room');
+        // console.log(allBookings);
+
+
+        const filteredBookings = allBookings.filter(book => book.hotel?.owner === req.user._id);
+
+        // console.log(filteredBookings);
+
+
+
+
+
+
+        if (!filteredBookings) {
             return res.status(404).json({ success: false, message: 'No hotel found' });
         }
-        //finding bookings using hotel id
-        console.log(hotel._id);
-        
-        const bookings = await Booking.find({ hotel: hotel._id }).populate('room hotel user').sort({ createdAt: -1 });
 
-        console.log(bookings);
-        
+
+
+
         //total booking
-        const totalBookings = bookings.length
-        //total revenue
-        const totalRevenue = bookings.reduce((acc, booking) => acc + booking.totalPrice, 0);
+        const totalBookings = filteredBookings.length
+
+        // console.log(totalBookings);
+
+        // //total revenue
+        const totalRevenue = filteredBookings.reduce((acc, booking) => acc + booking.totalPrice, 0);
+
+        // console.log(totalRevenue);
+
 
         return res.status(200).json({
             success: true, DashboardData: {
-                bookings,
+                filteredBookings,
                 totalBookings,
                 totalRevenue
             }

@@ -25,6 +25,8 @@ export const AppProvider = ({ children }) => {
     const fetchRoom = async () => {
         try {
             const { data } = await axios.get('/api/rooms');
+            // console.log(data);
+            
 
             if (data.success) {
                 setRooms(data.rooms);
@@ -38,7 +40,7 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.log(error.message);
             toast.error(error.message);
-            console.log('I am a room error');
+            // console.log('I am a room error');
 
         }
     }
@@ -47,6 +49,9 @@ export const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get('/api/user', { headers: { Authorization: `Bearer ${await getToken()}` } });
             // console.log('Fetched role:', data.role);
+
+            // console.log(data);
+            
 
 
             if (data.success) {
@@ -83,7 +88,7 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
 
         fetchRoom();
-        console.log(rooms);
+        // console.log(rooms);
 
     }, []);
 

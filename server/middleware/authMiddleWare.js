@@ -2,6 +2,8 @@ import User from "../models/user.js";
 
 export const protect = async (req, res, next) => {
     const { userId } = req.auth;
+    // console.log(userId);
+    
 
     if (!userId) {
         return res.status(401).json({ success: false, message: "User is not authorized" });
@@ -9,11 +11,16 @@ export const protect = async (req, res, next) => {
 
     try {
         const user = await User.findById(userId);
+        // console.log(user);
+        
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found in DB" });
         }
 
         req.user = user;
+
+        // console.log(req.user);
+        
         next();
     } catch (error) {
         console.error("Error in protect middleware:", error.message);
