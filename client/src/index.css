@@ -27,11 +27,16 @@
 
 @media screen and (max-width: 1700px) {
     .smallscreen {
-        transform: rotate(50deg);
+        transform: rotate(20deg);
         height: 100%;
+        /* left: 100 */
+
 
     }
-    .formDiv{
+
+  
+
+    .formDiv {
         width: 550px;
     }
 }
@@ -42,7 +47,9 @@
         display: none;
 
     }
-    
+
+   
+
 }
 
 
@@ -50,6 +57,10 @@
     .smallscreen {
         display: none;
 
+    }
+
+    .small {
+        top: 20;
     }
 
     .heroSubheading {
@@ -62,17 +73,23 @@
         width: 350px;
         text-shadow: 0px 0px 4px black;
     }
-    .disc{
+
+    .disc {
         width: 300px;
         text-shadow: 0px 0px 4px black;
     }
-    .heroDiv{
+
+    .heroDiv {
         top: 110px;
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
-     .formDiv{
+
+    .formDiv {
         width: 300px;
+    }
+    .small{
+        width: 200px;
     }
 }

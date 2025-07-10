@@ -17,8 +17,8 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'Hotel', path: '/rooms' },
-        { name: 'Experience', path: '/' },
-        { name: 'About', path: '/' },
+        { name: 'Experience', path: '/experience' },
+        { name: 'About', path: '/about' },
     ];
 
 
@@ -37,22 +37,21 @@ const Navbar = () => {
 
 
     useEffect(() => {
-
-        if (location.pathname !== '/') {
-            setIsScrolled(true);
-        }
-        else {
-            setIsScrolled(false);
-        }
-        setIsScrolled(prev => location.pathname !== '/' ? true : false);
-
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+        const checkScroll = () => {
+            if (location.pathname !== '/') {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(window.scrollY > 10);
+            }
         };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [location.pathname]);
 
+        // Run once on mount / route change
+        checkScroll();
+
+        // Add scroll listener
+        window.addEventListener('scroll', checkScroll);
+        return () => window.removeEventListener('scroll', checkScroll);
+    }, [location.pathname]);
 
     return (
 

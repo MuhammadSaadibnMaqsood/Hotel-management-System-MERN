@@ -14,6 +14,8 @@ import ListRoom from './pages/HotelOwner/ListRoom';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './Context/AppContext';
 import { Loader } from './components/Loader';
+import Experience from './pages/Experience';
+import About from './pages/About';
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/rooms' element={<AllRoom />} />
+          <Route path='/experience' element={<Experience />} />
+          <Route path='/about' element={<About />} />
           <Route path='/rooms/:id' element={<RoomDetail />} />
           <Route path='/myBookings' element={<MyBookings />} />
           <Route path='/loader/:nextUrl' element={<Loader />} />

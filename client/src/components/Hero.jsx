@@ -29,7 +29,7 @@ const Hero = () => {
       <div className='bg-black h-[90%] w-[100%] rotate-50 absolute bottom-0 left-56 text-white transform -translate-x-1/2 smallscreen'>
 
       </div>
-      <div className='text-white relative z-10 top-80 heroDiv'>
+      <div className='text-white relative z-10 top-50  heroDiv'>
         <p className="heroSubheading text-2xl bg-blue-600 hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] transition duration-500 ease-in-out shadow-white w-80 p-2.5 rounded-2xl ml-7 text-center opacity-80 backdrop-blur-sm tracking-wide">
           Ultimate Hotel Experience
         </p>

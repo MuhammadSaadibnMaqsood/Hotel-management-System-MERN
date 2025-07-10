@@ -17,7 +17,7 @@ const Exclusiveoffer = () => {
                     <button
                         className='text-sm font-medium px-4 py-2 border border-gray-300 rounded-lg
                  bg-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500
-                 hover:text-white transition-all duration-300 ease-in-out shadow-sm hover:shadow-md'
+                 hover:text-white transition-all duration-300 ease-in-out shadow-sm hover:shadow-md cursor-pointer'
                     >
                         View All Offers
                     </button>

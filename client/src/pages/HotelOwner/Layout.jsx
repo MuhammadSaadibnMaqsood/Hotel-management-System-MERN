@@ -4,6 +4,7 @@ import SideBar from '../../components/HotelOwner/SideBar'
 import { Outlet } from 'react-router-dom'
 import { useAppContext } from '../../Context/AppContext'
 import { useEffect } from 'react'
+// import Footer from '../../components/Footer'
 
 const Layout = () => {
 
@@ -23,6 +24,8 @@ const Layout = () => {
             <Outlet/>
           </div>
         </div>
+
+         {/* <Footer /> */}
     </div>
   )
 }

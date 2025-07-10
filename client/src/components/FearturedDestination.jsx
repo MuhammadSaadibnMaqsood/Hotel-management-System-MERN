@@ -31,7 +31,7 @@ const FearturedDestination = () => {
                     className='my-14 px-6 py-2 text-sm font-semibold border border-gray-300 rounded-lg 
                bg-white shadow-md hover:shadow-xl transition-all duration-300 ease-in-out 
                hover:scale-105 hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-500 
-               hover:text-white'
+               hover:text-white cursor-pointer'
                 >
                     View All Hotel
                 </button>

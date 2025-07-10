@@ -107,7 +107,7 @@ const MyBookings = () => {
                                     </span>
                                 </div>
                                 {!booking.isPaid && (
-                                    <button onClick={()=> handlePayment(booking._id)} className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
+                                    <button onClick={()=> handlePayment(booking._id)} className="px-4 cursor-pointer py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-md shadow hover:from-red-600 hover:to-pink-600 transition-all">
                                         Pay Now
                                     </button>
                                 )}

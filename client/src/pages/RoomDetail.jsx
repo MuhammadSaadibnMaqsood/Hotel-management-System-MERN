@@ -189,7 +189,7 @@ const RoomDetail = () => {
 
             {/* owner detail  */}
 
-            {room && <div className='flex flex-col items-start gap-4'>
+            {room && <div className='flex flex-col items-start gap-4 mb-7'>
                 <div className='flex gap-4'>
 
                     <div>

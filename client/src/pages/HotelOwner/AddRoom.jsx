@@ -133,7 +133,7 @@ const AddRoom = () => {
           <select
             value={input.roomType}
             onChange={e => setinput({ ...input, roomType: e.target.value })}
-            className='border border-gray-300 mt-1 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none'
+            className='border border-gray-300 mt-1 rounded-lg p-3 text-base sm:text-lg md:p-4 md:text-xl w-full focus:ring-2 focus:ring-blue-500 focus:outline-none'
           >
             <option value="">Select Room Type</option>
             <option value="Single Bed">Single Bed</option>
@@ -141,6 +141,7 @@ const AddRoom = () => {
             <option value="Luxury Room">Luxury Room</option>
             <option value="Family Suites">Family Suites</option>
           </select>
+
         </div>
         <div className='mt-4 sm:mt-0'>
           <p className='text-gray-800 font-semibold'>Price <span className='text-sm text-gray-500'>/night</span></p>
@@ -155,15 +156,15 @@ const AddRoom = () => {
       </div>
 
       {/* Amenities */}
-      <p className='text-gray-800 font-semibold mt-6'>Amenities</p>
-      <div className='flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-2 text-gray-700'>
+      <p className='hidden sm:block text-gray-800 font-semibold mt-6'>Amenities</p>
+      <div className='hidden sm:flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-2 text-gray-700'>
         {Object.keys(input.amenities).map((amenity, index) => (
           <label key={index} className='flex items-center gap-2'>
             <input
               type="checkbox"
               checked={input.amenities[amenity]}
               onChange={() => setinput({ ...input, amenities: { ...input.amenities, [amenity]: !input.amenities[amenity] } })}
-              className='accent-blue-600 h-4 w-4'
+              className='accent-blue-600 h-4 w-4 cursor-pointer'
             />
             <span>{amenity}</span>
           </label>
@@ -174,9 +175,9 @@ const AddRoom = () => {
       <button
         disabled={loading}
         type="submit"
-        className='mt-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition transform hover:scale-105'
+        className='mt-8 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition transform hover:scale-105'
       >
-       {loading ? 'Adding...':' Add Room'}
+        {loading ? 'Adding...' : ' Add Room'}
       </button>
     </form>
   )
